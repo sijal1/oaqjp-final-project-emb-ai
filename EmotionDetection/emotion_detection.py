@@ -2,6 +2,17 @@ import requests
 import json
 
 def emotion_detector(text_to_analyze):
+    # Check for blank input
+    if not text_to_analyze.strip():
+        return {
+            'anger': None,
+            'disgust': None,
+            'fear': None,
+            'joy': None,
+            'sadness': None,
+            'dominant_emotion': None
+        }, 400  # HTTP 400: Bad Request
+    
     url = "https://sn-watson-emotion.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict"
     headers = {"grpc-metadata-mm-model-id": "emotion_aggregated-workflow_lang_en_stock"}
     data = {"raw_document": {"text": text_to_analyze}}
@@ -30,7 +41,7 @@ def emotion_detector(text_to_analyze):
             'joy': joy,
             'sadness': sadness,
             'dominant_emotion': dominant_emotion
-        }
+        }, 200  # HTTP 200: OK
     
     else:
-        return {"error": "Failed to fetch emotions", "status_code": response.status_code}
+        return {"error": "Failed to fetch emotions", "status_code": response.status_code}, response.status_code
